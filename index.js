@@ -1,7 +1,7 @@
 const APIURL = "https://api.github.com/users/";
 const main = document.getElementById("main");
-const form = document.getElementById("form");
-const search = document.getElementById("search");
+
+
 
 getUser("dptk2311");
 
@@ -55,14 +55,27 @@ function addReposToCard(repos){
         });
 }
 
+//Seearchbox
 form.addEventListener("submit", (e) => {  
     e.preventDefault();  
     const user = search.value;  
     if (user) {    
         getUser(user);    
+        updateSearchHistory(user);
         search.value = "";  
     }
 });
+
+function updateSearchHistory(searchValue) {  
+    const searchHistoryContainer = document.getElementById("search-history");  // Create a new search history item  
+    const searchHistoryItem = document.createElement("div");  searchHistoryItem.classList.add("search-history-item");  
+    searchHistoryItem.innerText = searchValue;  // Add the new search history item to the container  
+    searchHistoryContainer.prepend(searchHistoryItem);  // Check if there are more than 3 search history items  // If so, remove the oldest item  
+    if (searchHistoryContainer.children.length > 3) {    
+        searchHistoryContainer.lastChild.remove();  
+    }
+}
+
 
 getUser("dptk2311");
 
