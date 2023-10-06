@@ -66,15 +66,117 @@ form.addEventListener("submit", (e) => {
     }
 });
 
-function updateSearchHistory(searchValue) {  
+/*function updateSearchHistory(searchValue) {  
     const searchHistoryContainer = document.getElementById("search-history");  // Create a new search history item  
     const searchHistoryItem = document.createElement("div");  searchHistoryItem.classList.add("search-history-item");  
     searchHistoryItem.innerText = searchValue;  // Add the new search history item to the container  
     searchHistoryContainer.prepend(searchHistoryItem);  // Check if there are more than 3 search history items  // If so, remove the oldest item  
-    if (searchHistoryContainer.children.length > 3) {    
+    if (searchHistoryContainer.children.length > 5) {    
+        searchHistoryContainer.lastChild.remove();  
+    }
+}*/
+
+function updateSearchHistory(searchValue) {  
+    const searchHistoryContainer = document.getElementById("search-history");  
+    const searchHistoryItem = document.createElement("div");  
+    searchHistoryItem.classList.add("search-history-item");  
+    searchHistoryItem.innerText = searchValue;  
+
+    // Add a timestamp to the search history item
+    const timestamp = new Date().getTime();
+    searchHistoryItem.dataset.timestamp = timestamp;
+    
+    searchHistoryContainer.prepend(searchHistoryItem);  
+
+    // Check if there are more than 10 search history items  
+    // If so, remove the oldest item  
+    if (searchHistoryContainer.children.length > 10) {    
         searchHistoryContainer.lastChild.remove();  
     }
 }
+
+// Function to sort search history items by timestamp (oldest to newest)
+function sortSearchItemsByTimestampAsc() {
+    const searchHistoryContainer = document.getElementById("search-history");
+    const searchHistoryItems = Array.from(searchHistoryContainer.children);
+
+    searchHistoryItems.sort((a, b) => {
+        const timestampA = parseInt(a.dataset.timestamp);
+        const timestampB = parseInt(b.dataset.timestamp);
+
+        return timestampA - timestampB;
+    });
+
+    searchHistoryContainer.innerHTML = "";
+    searchHistoryItems.forEach((item) => {
+        searchHistoryContainer.appendChild(item);
+    });
+}
+
+// Function to sort search history items by timestamp (newest to oldest)
+function sortSearchItemsByTimestampDesc() {
+    const searchHistoryContainer = document.getElementById("search-history");
+    const searchHistoryItems = Array.from(searchHistoryContainer.children);
+
+    searchHistoryItems.sort((a, b) => {
+        const timestampA = parseInt(a.dataset.timestamp);
+        const timestampB = parseInt(b.dataset.timestamp);
+
+        return timestampB - timestampA;
+    });
+
+    searchHistoryContainer.innerHTML = "";
+    searchHistoryItems.forEach((item) => {
+        searchHistoryContainer.appendChild(item);
+    });
+}
+
+// Function to sort search history items by occurrence count (descending order)
+function sortSearchItemsByOccurrenceDesc() {
+    const searchHistoryContainer = document.getElementById("search-history");
+    const searchHistoryItems = Array.from(searchHistoryContainer.children);
+
+    searchHistoryItems.sort((a, b) => {
+        const countA = getSearchItemOccurrenceCount(a.innerText);
+        const countB = getSearchItemOccurrenceCount(b.innerText);
+
+        return countB - countA;
+    });
+
+    searchHistoryContainer.innerHTML = "";
+    searchHistoryItems.forEach((item) => {
+        searchHistoryContainer.appendChild(item);
+    });
+}
+
+// Helper function to get the occurrence count of a search history item
+function getSearchItemOccurrenceCount(searchItem) {
+    const searchHistoryContainer = document.getElementById("search-history");
+    const searchHistoryItems = Array.from(searchHistoryContainer.children);
+
+    let count = 0;
+    searchHistoryItems.forEach((item) => {
+        if (item.innerText === searchItem) {
+            count++;
+        }
+    });
+
+    return count;
+}
+// Sort by oldest to newest
+document.getElementById("sort-oldest-btn").addEventListener("click", () => {
+    sortSearchItemsByTimestampAsc();
+});
+
+// Sort by newest to oldest
+document.getElementById("sort-newest-btn").addEventListener("click", () => {
+    sortSearchItemsByTimestampDesc();
+});
+
+// Sort by occurrence count (descending order)
+document.getElementById("sort-occurrence-btn").addEventListener("click", () => {
+    sortSearchItemsByOccurrenceDesc();
+});
 
 
 getUser("dptk2311");
